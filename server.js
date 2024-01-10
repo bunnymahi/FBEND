@@ -3,7 +3,7 @@ const app = express();
 const cors = require("cors");
 const multer = require("multer");
 const tf = require("@tensorflow/tfjs-node");
-const sharp = require("sharp");
+const Jimp = require("jimp");
 const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -83,12 +83,12 @@ app.post("/uploads", upload.single("image"), async (req, res) => {
     console.log(req.file);
     console.log(req.file.path);
     console.log(req.body)
-    const processedImage = await sharp(req.file.path)
-      .resize({ width: 128, height: 128 })
-      .toBuffer();
-    console.log('Image processed successfully.');
-    //   res.json({ message: 'Image processed successfully.' });
-    const inputTensor = tf.node.decodeImage(processedImage);
+        const image = await Jimp.read(req.file.path);
+    await image.resize(128, 128); // Resize the image
+
+    const processedImageBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
+
+    const inputTensor = tf.node.decodeImage(processedImageBuffer);
     const expandedTensor = inputTensor.expandDims();
     const normalizedTensor = expandedTensor.div(255.0);
     const reshapedTensor = normalizedTensor.reshape([1, 128, 128, 3]);
