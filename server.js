@@ -117,9 +117,9 @@ app.post("/uploads", upload.single("image"), async (req, res) => {
     // res.send("success")
     res.json({ message: 'Image processed successfully.' });
 
-    if (label === 'cracked') {
-      sendTwilioMessage();
-    }
+    // if (label === 'cracked') {
+    //   sendTwilioMessage();
+    // }
   } catch (error) {
     console.error("Error processing image:", error);
     // res.json({ message: 'Error processing Image.' });
